@@ -4,7 +4,9 @@ const bcrypt = require("bcryptjs");
 const gravatar = require("gravatar");
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
+const Agent = require("../../models/Agents");
 const key = require("../../config/keys");
+const passport = require("passport");
 
 //load input validation
 const validateLoginInput = require("../../validation/login");
@@ -35,7 +37,8 @@ router.post("/login", (req, res) => {
         const payload = {
           id: user.id,
           name: user.name,
-          avatar: user.avatar
+          avatar: user.avatar,
+          role: user.role
         };
         jwt.sign(payload, key.secret, { expiresIn: 3600 }, (err, token) => {
           res.json({
@@ -52,7 +55,7 @@ router.post("/login", (req, res) => {
 });
 
 //  POST api/users/register
-//  Login User / return token
+//  Register User / return user
 //  PUBLIC
 router.post("/register", (req, res) => {
   const { errs, isValid } = validateRegisterInput(req.body);
@@ -77,6 +80,12 @@ router.post("/register", (req, res) => {
         email: req.body.email,
         avatar: avatar,
         password: req.body.password
+      });
+
+      Agent.findOne({ email: req.body.email }).then(agent => {
+        if (agent) {
+          newUser.role = "agent";
+        }
       });
 
       bcrypt.genSalt(10, (err, salt) => {

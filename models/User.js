@@ -7,7 +7,6 @@ const UserScheme = new Schema({
     type: String,
     required: true
   },
-
   email: {
     type: String,
     required: true
@@ -18,6 +17,11 @@ const UserScheme = new Schema({
   },
   avatar: {
     type: String
+  },
+  role: {
+    type: String,
+    enum: ["vip", "admin", "agent"],
+    default: "vip"
   },
   date: {
     type: Date,

@@ -1,16 +1,24 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-
+const passport = require("passport");
 const users = require("./routes/api/users");
+const agents = require("./routes/api/agents");
+const profiles = require("./routes/api/profiles");
 
 const app = express();
 
+app.use(bodyParser.json());
 const PORT = process.env.PORT || 6000;
 
-app.use(bodyParser.json());
+//passport middleware
+app.use(passport.initialize());
+//passport config
+require("./config/passport")(passport);
 
 app.use("/api/users", users);
+app.use("/api/agents", agents);
+app.use("/api/profiles", profiles);
 
 let db;
 if (process.env.NODE_ENV === "production") {

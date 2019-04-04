@@ -7,7 +7,7 @@ const ProfileSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users"
   },
-  sex: {
+  gender: {
     type: String,
     required: true
   },
@@ -37,56 +37,20 @@ const ProfileSchema = new Schema({
   },
   employment: [
     {
-      title: {
-        type: String,
-        require: true
-      },
-      company: {
-        type: String,
-        required: true
-      },
-      location: {
-        type: String,
-        required: true
-      },
-      from: {
-        type: Date,
-        required: true
-      },
-      to: {
-        type: Date,
-        required: true
-      },
-      current: {
-        type: Boolean,
-        default: false
-      }
+      type: Schema.Types.ObjectId,
+      ref: "employments"
     }
   ],
   education: [
     {
-      major: {
-        type: String,
-        required: true
-      },
-      school: {
-        type: String,
-        required: true
-      },
-      from: {
-        type: Date,
-        required: true
-      },
-      to: {
-        type: Date,
-        required: true
-      }
+      type: Schema.Types.ObjectId,
+      ref: "educations"
     }
   ],
-  date: {
+  createAt: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = Profile = mongoose.model("profiles", ProfileSchema);
+exports.model = mongoose.model("profiles", ProfileSchema);

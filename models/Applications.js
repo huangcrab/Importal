@@ -7,10 +7,6 @@ const ApplicationSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "users"
   },
-  profile: {
-    type: Schema.Types.ObjectId,
-    ref: "profiles"
-  },
   applicationForm: {
     type: Schema.Types.ObjectId,
     ref: "applicationForm"
@@ -18,10 +14,15 @@ const ApplicationSchema = new Schema({
   status: {
     type: String,
     required: true
+  },
+  assignedTo: {
+    type: Schema.Types.ObjectId,
+    ref: "users"
+  },
+  createAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
-module.exports = Application = mongoose.model(
-  "applications",
-  ApplicationSchema
-);
+exports.model = mongoose.model("applications", ApplicationSchema);

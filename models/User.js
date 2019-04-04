@@ -23,10 +23,10 @@ const UserScheme = new Schema({
     enum: ["vip", "admin", "agent"],
     default: "vip"
   },
-  date: {
+  createAt: {
     type: Date,
     default: Date.now
   }
 });
 
-module.exports = User = mongoose.model("users", UserScheme);
+exports.model = mongoose.model("users", UserScheme);

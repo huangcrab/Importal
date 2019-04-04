@@ -3,10 +3,10 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const gravatar = require("gravatar");
 const jwt = require("jsonwebtoken");
-const User = require("../../models/User");
-const Agent = require("../../models/Agents");
+const { model: User } = require("../../models/User");
 const key = require("../../config/keys");
 const passport = require("passport");
+const roleCheck = require("../../controllers/roleCheck");
 
 //load input validation
 const validateLoginInput = require("../../validation/login");
@@ -65,7 +65,7 @@ router.post("/register", (req, res) => {
   }
 
   User.findOne({ email: req.body.email }).then(user => {
-    if (user) {
+    if (user && user.password) {
       errs.email = "Email already exist";
       return res.status(400).json(errs);
     } else {
@@ -82,11 +82,13 @@ router.post("/register", (req, res) => {
         password: req.body.password
       });
 
-      Agent.findOne({ email: req.body.email }).then(agent => {
-        if (agent) {
-          newUser.role = "agent";
-        }
-      });
+      User.findOne({ email: req.body.email })
+        .then(user => {
+          if (user.role === "agent") {
+            newUser.role = "agent";
+          }
+        })
+        .catch(err => console.log(err));
 
       bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(newUser.password, salt, (err, hash) => {
@@ -101,5 +103,37 @@ router.post("/register", (req, res) => {
     }
   });
 });
+
+//POST /users/addAgent
+//Add Agents
+//PRIVATE
+router.post(
+  "/addAgent",
+  passport.authenticate("jwt", { session: false }),
+  roleCheck.roleCheck(["admin"]),
+  (req, res) => {
+    const email = req.body.email;
+
+    const { errs, isValid } = validateAddAgentInput(req.body);
+
+    if (!isValid) {
+      return res.status(400).json(errs);
+    }
+
+    User.findOne({ email }).then(agent => {
+      if (agent) {
+        errs.email = "Email already exist";
+        return res.status(400).json(errs);
+      }
+
+      const newAgent = new User({
+        email,
+        role: "agent"
+      });
+
+      newAgent.save(agent => res.json(agent)).catch(err => console.log(err));
+    });
+  }
+);
 
 module.exports = router;

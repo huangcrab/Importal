@@ -11,25 +11,18 @@ const ApplicationFormSchema = new Schema({
     type: String,
     required: true
   },
-  validation: [
-    {
-      education: {
-        type: Number,
-        required: true
-      },
-      employment: {
-        type: Number,
-        required: true
-      }
-    }
-  ],
-  validationTest: {
+  validation: {
     type: Object,
     required: true
+  },
+  fields: {
+    type: Object,
+    required: true
+  },
+  createAt: {
+    type: Date,
+    default: Date.now
   }
 });
 
-module.exports = ApplicationForm = mongoose.model(
-  "applicationForm",
-  ApplicationFormSchema
-);
+exports.model = mongoose.model("applicationForm", ApplicationFormSchema);

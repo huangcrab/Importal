@@ -1,4 +1,4 @@
-const User = require("../models/User");
+const { model: User } = require("../models/User");
 
 exports.roleCheck = function(roles) {
   return function(req, res, next) {

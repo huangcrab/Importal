@@ -11,6 +11,7 @@ const roleCheck = require("../../controllers/roleCheck");
 //load input validation
 const validateLoginInput = require("../../validation/login");
 const validateRegisterInput = require("../../validation/register");
+const validateAddAgentInput = require("../../validation/addAgent");
 
 //  POST api/users/login
 //  Login User / return token
@@ -114,7 +115,7 @@ router.post(
   (req, res) => {
     const email = req.body.email;
 
-    const { errs, isValid } = validateAddAgentInput(req.body);
+    const { errs, isValid } = validateRegisterInput(req.body, "agent");
 
     if (!isValid) {
       return res.status(400).json(errs);
@@ -127,8 +128,9 @@ router.post(
       }
 
       const newAgent = new User({
-        email,
-        role: "agent"
+        name: req.body.name,
+        email: req.body.email,
+        password: null
       });
 
       newAgent.save(agent => res.json(agent)).catch(err => console.log(err));
